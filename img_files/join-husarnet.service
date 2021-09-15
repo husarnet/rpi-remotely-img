@@ -1,0 +1,12 @@
+[Unit]
+Description=Joining Husarnet ...
+After=husarnet.service
+
+[Service]
+Type=simple
+User=ubuntu
+EnvironmentFile=/etc/husarnet-credentials
+ExecStart=/usr/local/bin/join_husarnet.sh
+
+[Install]
+WantedBy=multi-user.target

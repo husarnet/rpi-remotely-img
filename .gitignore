@@ -1,0 +1,4 @@
+output/
+packer_cache/
+*.img
+configs.pkrvars.hcl

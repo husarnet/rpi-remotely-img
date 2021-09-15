@@ -1,0 +1,11 @@
+# Place your Husarnet JoinCode and your hostname here
+# You will find your JoinCode at https://app.husarnet.com  
+#  -> Click on the desired network  
+#  -> [Add element] button  
+#  -> [Join code] tab
+
+husarnet_hostname = "my-remote-rpi"
+husarnet_joincode = "fc94:b01d:1803:8dd8:b293:5c7d:7639:932a/xxxxxxxxxxxxxxxxxxxxxx"
+
+wifi_ssid = "my-wifi-network"
+wifi_pass = "password-to-my-wifi"

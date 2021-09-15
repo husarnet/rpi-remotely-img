@@ -1,0 +1,11 @@
+version: "3.0"
+
+services:
+  img-builder:
+    build: .
+    privileged: true
+    volumes:
+      - /dev:/dev
+      - ./packer_cache:/build/packer_cache
+      - ./output:/build/output
+    command: build --var-file=./configs.pkrvars.hcl .

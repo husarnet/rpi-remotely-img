@@ -1,0 +1,94 @@
+
+name: Build custom RPi images
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - '.gitignore'
+  
+jobs:
+  build-img:
+    runs-on: ubuntu-20.04
+
+    outputs:
+      # to have unique cache id for each re-run
+      cache-key: ${{ steps.img-name.outputs.img-name }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Building an docker image for image builder
+      run: docker build -t "rpi-image-builder" .
+
+    - name: Building RPi image
+      run: >
+        docker run --rm --privileged 
+        -v /dev:/dev 
+        -v ${PWD}/packer_cache:/build/packer_cache 
+        -v ${PWD}/output:/build/output 
+        rpi-image-builder 
+        build 
+        -var "wifi_ssid=${{ secrets.WIFI_SSID }}" 
+        -var "wifi_pass=${{ secrets.WIFI_PASS }}" 
+        -var "husarnet_hostname=${{ secrets.HUSARNET_HOSTNAME }}" 
+        -var "husarnet_joincode=${{ secrets.HUSARNET_JOINCODE }}" 
+        .
+
+    - name: Verify iso file presence
+      run: ls -la ${{ github.workspace }}/output
+
+    - name: Save a cache key for the following jobs
+      id: img-name
+      run: echo "::set-output name=img-name::$(echo $(cd ${{ github.workspace }}/output/ && ls *.img | sed -r 's/(.*).img/\1/g'))"
+
+    - name: Caching the output folder
+      id: cache-id
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/output
+        key: cache-key-${{ steps.img-name.outputs.img-name }}
+
+  upload-artifacts:
+    runs-on: ubuntu-20.04
+    needs: build-img
+
+    steps:
+    - name: Restoring the image from cache
+      id: cache-id
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/output
+        key: cache-key-${{ needs.build-img.outputs.cache-key }}
+
+    - name: Archiving the built image
+      if: steps.cache-id.outputs.cache-hit == 'true'
+      uses: actions/upload-artifact@v2
+      with:
+        name: rpi-ubuntu-img
+        path: ${{ github.workspace }}/output/*.img.tar.gz
+        retention-days: 1
+
+  save-on-s3:
+    runs-on: ubuntu-20.04
+    needs: build-img
+
+    steps:
+    - name: Restoring the image from cache
+      id: cache-id
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/output
+        key: cache-key-${{ needs.build-img.outputs.cache-key }}
+
+    - name: Sending do S3
+      if: steps.cache-id.outputs.cache-hit == 'true'
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --follow-symlinks --delete
+      env:
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        SOURCE_DIR: '${{ github.workspace }}/output' 

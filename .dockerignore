@@ -1,0 +1,9 @@
+.github
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+LICENSE
+output
+packer_cache
+configs.pkrvars.hcl.template
