@@ -19,7 +19,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Building an docker image for image builder
+    - name: Building a docker image for an image builder
       run: docker build -t "rpi-image-builder" .
 
     - name: Building RPi image
@@ -36,7 +36,7 @@ jobs:
         -var "husarnet_joincode=${{ secrets.HUSARNET_JOINCODE }}" 
         .
 
-    - name: Verify iso file presence
+    - name: Verify img file presence
       run: ls -la ${{ github.workspace }}/output
 
     - name: Save a cache key for the following jobs

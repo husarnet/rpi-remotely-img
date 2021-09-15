@@ -4,6 +4,7 @@
 Dockerfile
 docker-compose.yml
 LICENSE
-output
-packer_cache
+output/
+packer_cache/
 configs.pkrvars.hcl.template
+configs.pkrvars.hcl

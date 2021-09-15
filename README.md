@@ -14,9 +14,11 @@ Additional software/configuration for Ubuntu 20.04 Server introduced by this tem
 
 ## Using the template
 
+Click **[ Use this template ]** button to create a copy of this repository on your GitHub profile and choose one of 4 ways of using it:
+
 ### [ Locally ] Docker-Compose and `*.pkrvars.hcl` File
 
-Clone this repo, rename a `configs.pkrvars.hcl.template` file to `configs.pkrvars.hcl` and place your Wi-Fi and Husarnet credentials there.
+Clone your repository, rename a `configs.pkrvars.hcl.template` file to `configs.pkrvars.hcl` and place your Wi-Fi and Husarnet credentials there.
 
 Then execute:
 
@@ -26,7 +28,7 @@ docker-compose up --build
 
 ### [ Locally ] Docker and Environment Variables
 
-Clone this repo, and set Wi-Fi and Husarnet credentials as environment variables. Then build and run the container:
+Clone your repository, and set Wi-Fi and Husarnet credentials as environment variables. Then build and run the container:
 
 ```bash
 export MY_SSID="place-your-wifi-ssid-here"
@@ -46,7 +48,7 @@ build -var "wifi_ssid=${MY_SSID}" -var "wifi_pass=${MY_PASS}" -var "husarnet_hos
 
 ### [ Remotely ] GitHub Actions and Build Artifacts
 
-Create a fork of this repo and define the following secrets for the clonned repo (repo Settings -> Secrets tab):
+Define the following secrets in your copy of this template (repo Settings -> Secrets tab):
 
 ```
 HUSARNET_HOSTNAME
@@ -59,7 +61,7 @@ After triggering the workflow (eg. on `git push`) you should see `rpi-ubuntu-20.
 
 ### [ Remotely ] GitHub Actions and S3 Server
 
-Create a fork of this repo and define the following secrets for the clonned repo (repo Settings -> Secrets tab):
+Define the following secrets in your copy of this template  (repo Settings -> Secrets tab):
 
 ```
 AWS_ACCESS_KEY_ID
